@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Adsiliptam.initialize(MainActivity.this, "", "https://iliptam.com/campaign/", 100,
+        Adsiliptam.initialize(MainActivity.this, 123456789, "", 100,
                 new OnInitializationCompleteListener() {
                     @Override
                     public void onInitializationComplete(boolean success) {

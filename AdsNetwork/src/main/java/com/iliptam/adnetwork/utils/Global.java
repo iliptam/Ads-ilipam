@@ -15,7 +15,7 @@ public class Global {
     public static String API_URL = "";
     public static String IMAGE_URL = "";
 
-    public static String CAT_ID = "";
+    public static int CAT_ID;
 
     public static boolean check(Context context, long snd) {
         final PrefManager prf = new PrefManager(context.getApplicationContext());

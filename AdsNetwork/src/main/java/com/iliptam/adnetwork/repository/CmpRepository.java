@@ -1,5 +1,7 @@
 package com.iliptam.adnetwork.repository;
 
+import static com.iliptam.adnetwork.utils.Global.CAT_ID;
+
 import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -49,7 +51,7 @@ public class CmpRepository {
     public void loadFromServer(String key, OnInitializationCompleteListener completeListener) {
         Retrofit retrofit = apiClient.getClient();
         apiRest service = retrofit.create(apiRest.class);
-        Call<List<AdCampaign>> call = service.getCampaignsById(2);
+        Call<List<AdCampaign>> call = service.getCampaignsById(CAT_ID);
         call.enqueue(new Callback<List<AdCampaign>>() {
             @Override
             public void onResponse(Call<List<AdCampaign>> call, Response<List<AdCampaign>> response) {

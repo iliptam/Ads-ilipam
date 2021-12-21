@@ -20,7 +20,7 @@ public class Adsiliptam {
     public static CmpViewModel cmpViewModel;
     public static PrefManager prefManager;
 
-    public static void initialize(Context context, String key, String url, int loadSeconds, OnInitializationCompleteListener listener) {
+    public static void initialize(Context context, int key, String url, int loadSeconds, OnInitializationCompleteListener listener) {
         completeListener = listener;
         mcontext = context;
         Global.CAT_ID = key;
