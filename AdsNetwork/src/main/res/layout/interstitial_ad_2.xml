@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/interstitial_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8E8E8"
+    android:orientation="vertical">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:background="#E8E8E8"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_ads_cancel"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/interstitial_cancel_button_shape"
+            android:backgroundTint="#202020"
+            android:elevation="2dp"
+            android:src="@drawable/close"
+            android:tint="#FFFF"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_ads_photo"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@color/blueAccent"
+            android:maxHeight="250dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_ads_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/iv_ads_photo"
+            app:layout_constraintVertical_bias="0.24000001" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_ads_photo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/iv_ads_photo"
+            android:background="@drawable/gray_gradient_shadow" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="#FF861F"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="Ad"
+            android:textColor="#FFF"
+            android:textSize="14dp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="32dp"
+            app:cardBackgroundColor="#FFF"
+            app:cardCornerRadius="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/roundedImageView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="#FFFF"
+                    android:elevation="4dp"
+                    app:cardCornerRadius="10dp"
+                    app:layout_constraintBottom_toTopOf="@+id/ads_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:id="@+id/iv_ad_logo"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:adjustViewBounds="true"
+                            android:baselineAlignBottom="false"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/placeholder_image"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/ads_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_horizontal"
+                    android:paddingHorizontal="8dp"
+                    android:text="App Name"
+                    android:textColor="#1C1C1C"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/ads_description"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/rating_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="32dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toTopOf="@+id/ads_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <RatingBar
+                        android:id="@+id/ads_rating"
+                        style="@style/Widget.AppCompat.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="2dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="2dp"
+                        android:numStars="5"
+                        android:rating="3.3"
+                        android:textColor="#FFC107"
+                        android:theme="@style/RatingBar"
+                        app:layout_constraintTop_toBottomOf="@+id/ads_title" />
+
+                    <TextView
+                        android:id="@+id/price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
+                        android:text="Free"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginHorizontal="8dp"
+                        android:background="@drawable/ads_bg"
+                        android:paddingHorizontal="5dp"
+                        android:paddingVertical="1dp"
+                        android:text="Ad"
+                        android:textColor="#4CAF50"
+                        android:textSize="10dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/ads_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center_horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:text="Intrusive Interstitials: Guidelines To Avoiding Google's Penalty — Smashing Magazine"
+                    android:textSize="16sp"
+                    app:layout_constraintBottom_toTopOf="@+id/rating_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/ads_title2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingHorizontal="8dp"
+                    android:text="App Name"
+                    android:textColor="#1C1C1C"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:layout_editor_absoluteY="231dp" />
+
+                <Button
+                    android:id="@+id/ads_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Button"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/ads_close"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/ads_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_marginHorizontal="32dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/ads_bg"
+                    android:backgroundTint="#818181"
+                    android:paddingHorizontal="30dp"
+                    android:text="Close"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#818181"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--<RelativeLayout
+        android:id="@+id/rlv_ads"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="#FFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="#FF861F"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:text="Ad"
+            android:textColor="#FFF"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_ads_cancel"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/interstitial_cancel_button_shape"
+            android:elevation="2dp"
+            android:src="@drawable/close" />
+
+        <LinearLayout
+            android:id="@+id/cv_logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_ads_cancel"
+            android:layout_alignParentLeft="true">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginVertical="8dp"
+                android:layout_marginLeft="8dp"
+                android:elevation="4dp"
+                app:cardCornerRadius="5dp">
+
+                <ImageView
+                    android:id="@+id/iv_ads_logo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_android_black_24dp" />
+
+            </androidx.cardview.widget.CardView>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_ads_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="8dp"
+                    android:maxLines="2"
+                    android:text="Lifetime Access"
+                    android:textColor="#000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <RatingBar
+                    android:id="@+id/stars"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_ads_title"
+                    android:layout_margin="8dp"
+                    android:theme="@style/RatingBar"
+                    android:numStars="5"
+                    android:rating="3.3"
+                    />
+
+                <TextView
+                    android:id="@+id/price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_ads_title"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toRightOf="@id/stars"
+                    android:text="Free"
+                    android:textSize="12sp" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_ads_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_ads_install2"
+            android:layout_below="@id/cv_logo"
+            android:maxHeight="500dp"
+            android:minHeight="200dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/xml_gradient_shadow" />
+        <TextView
+            android:id="@+id/tv_ads_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btn_ads_install2"
+            android:layout_marginBottom="20dp"
+            android:gravity="center"
+            android:layout_marginHorizontal="20dp"
+            android:text="How to get Money Frome Blog How to get Money Frome Blog"
+            android:textColor="#FFF"
+            android:textSize="15sp" />
+
+
+        <Button
+            android:id="@+id/btn_ads_install2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="#2196F3"
+            android:paddingHorizontal="100dp"
+            android:text="Install"
+            android:textAllCaps="false"
+            android:textColor="#FFF"
+            android:textSize="18sp" />
+
+
+    </RelativeLayout>-->
+</RelativeLayout>

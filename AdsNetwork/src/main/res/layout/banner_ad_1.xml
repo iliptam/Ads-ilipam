@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rv_rl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/left_rv"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/roundedImageView"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="#FFFF"
+            app:cardCornerRadius="5dp"
+            android:elevation="4dp">
+
+            <ImageView
+                android:id="@+id/app_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                />
+        </androidx.cardview.widget.CardView>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/lll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="2dp"
+        android:layout_toLeftOf="@id/button"
+        android:layout_toRightOf="@+id/left_rv"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:duplicateParentState="true"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="App name"
+            android:textColor="#212121"
+            android:textSize="16sp">
+
+            <requestFocus
+                android:duplicateParentState="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+        </TextView>
+
+        <TextView
+            android:id="@+id/app_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:text="A long and boring application description"
+            android:textColor="#757575"
+            android:textSize="12sp" />
+
+        <RatingBar
+            android:id="@+id/stars"
+            style="@style/Widget.AppCompat.RatingBar.Small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="2dp"
+            android:numStars="5"
+            android:rating="3.3"
+            android:textColor="#FFC107"
+            android:theme="@style/RatingBar" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"
+        android:backgroundTint="#2196F3"
+        android:text="Button"
+        android:textAllCaps="false"
+        android:textColor="#FFFF"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:background="#FF861F"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="1dp"
+        android:text="Ad"
+        android:textColor="#FFF"
+        android:textSize="10dp"
+        android:textStyle="bold" />
+</RelativeLayout>
