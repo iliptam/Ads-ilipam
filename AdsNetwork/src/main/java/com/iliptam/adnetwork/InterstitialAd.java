@@ -3,7 +3,9 @@ package com.iliptam.adnetwork;
 import static com.iliptam.adnetwork.Adsiliptam.LS;
 import static com.iliptam.adnetwork.Adsiliptam.prefManager;
 import static com.iliptam.adnetwork.utils.Global.IMAGE_URL;
+import static com.iliptam.adnetwork.utils.Global.SETIMP;
 import static com.iliptam.adnetwork.utils.Global.check;
+import static com.iliptam.adnetwork.utils.Global.checkIMP;
 
 import android.app.Activity;
 import android.content.Context;
@@ -73,17 +75,6 @@ public class InterstitialAd {
     }
 
     public void loadAds() {
-
-        if (Global.isConnectedToInternet(context)) {
-            if (check(context, LS)) {
-                DataFromServer();
-            } else {
-                if (!prefManager.getBoolean("INIT")) {
-                    DataFromServer();
-                }
-            }
-        }
-
         if (Global.isConnectedToInternet(context)) {
             adsViewModel.getCampaign(type).observe((LifecycleOwner) context, new Observer<List<Campaign>>() {
                 @Override
@@ -157,6 +148,7 @@ public class InterstitialAd {
         RelativeLayout interstitial_parent;
         PrefManager prefManager;
         List<Integer> layoutlist;
+        CmpViewModel cmpViewModel;
 
         protected void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -166,6 +158,9 @@ public class InterstitialAd {
             Random random = new Random();
             int layout = layoutlist.get(random.nextInt(layoutlist.size()));
             this.setContentView(layout);
+
+            cmpViewModel = new ViewModelProvider((ViewModelStoreOwner) this).get(CmpViewModel.class);
+
             prefManager = new PrefManager(InterstitialActivity.this);
             iv_ads_cancel = (ImageView) this.findViewById(R.id.iv_ads_cancel);
             iv_ads_logo = (ImageView) this.findViewById(R.id.iv_ad_logo);
@@ -252,8 +247,16 @@ public class InterstitialAd {
             Log.i("Adsiliptam", "imp " + adCampaign.cam_name
                     + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
 
+            if (checkIMP(InterstitialActivity.this, SETIMP)) {
+                setDataServer(adCampaign);
+            }
+
             mAdListener.onAdLoaded();
 
+        }
+
+        private void setDataServer(Campaign adCampaign) {
+            cmpViewModel.setDataServer();
         }
 
         public void onBackPressed() {

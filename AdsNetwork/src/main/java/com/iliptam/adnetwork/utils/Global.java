@@ -16,6 +16,7 @@ public class Global {
     public static String IMAGE_URL = "";
 
     public static int CAT_ID;
+    public static int SETIMP = 100;
 
     public static boolean check(Context context, long snd) {
         final PrefManager prf = new PrefManager(context.getApplicationContext());
@@ -43,6 +44,41 @@ public class Global {
                 Log.i("Adsiliptam", "Second: " + seconds);
                 if (seconds > snd) {
                     prf.setString("LAST_DATA_LOAD", strDate);
+                    return true;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkIMP(Context context, long snd) {
+        final PrefManager prf = new PrefManager(context.getApplicationContext());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String strDate = sdf.format(c.getTime());
+
+        if (prf.getString("LAST_IMP_LOAD").equals("")) {
+            prf.setString("LAST_IMP_LOAD", strDate);
+            return true;
+        } else {
+            String toyBornTime = prf.getString("LAST_IMP_LOAD");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            try {
+                Date oldDate = dateFormat.parse(toyBornTime);
+                System.out.println(oldDate);
+
+                Date currentDate = new Date();
+
+//                Log.i("Adsiliptam", "IMP_Date " + oldDate +  " " + currentDate);
+
+                long diff = currentDate.getTime() - oldDate.getTime();
+                long seconds = diff / 1000;
+                Log.i("Adsiliptam", "IMP_Second: " + seconds);
+                if (seconds > snd) {
+                    prf.setString("LAST_IMP_LOAD", strDate);
                     return true;
                 }
             } catch (ParseException e) {

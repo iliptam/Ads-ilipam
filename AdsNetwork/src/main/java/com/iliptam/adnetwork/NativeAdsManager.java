@@ -1,6 +1,8 @@
 package com.iliptam.adnetwork;
 
 import static com.iliptam.adnetwork.utils.Global.IMAGE_URL;
+import static com.iliptam.adnetwork.utils.Global.SETIMP;
+import static com.iliptam.adnetwork.utils.Global.checkIMP;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +24,7 @@ import com.iliptam.adnetwork.models.Campaign;
 import com.iliptam.adnetwork.utils.Global;
 import com.iliptam.adnetwork.utils.PrefManager;
 import com.iliptam.adnetwork.viewmodels.AdsViewModel;
+import com.iliptam.adnetwork.viewmodels.CmpViewModel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,6 +53,7 @@ public class NativeAdsManager {
     List<NativeAd> nativeAdList;
     Listener mListener;
     PrefManager prefManager;
+    public static CmpViewModel cmpViewModel;
 
     public NativeAdsManager(Context context, String type, int numAdsRequested) {
         this.mContext = context;
@@ -59,6 +63,8 @@ public class NativeAdsManager {
         adsList = new ArrayList<>();
         nativeAdList = new ArrayList<>();
         adsViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(AdsViewModel.class);
+        cmpViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CmpViewModel.class);
+
     }
 
     public void setListener(Listener listener) {
@@ -129,10 +135,18 @@ public class NativeAdsManager {
                 Log.i("Adsiliptam", "imp " + adCampaign.cam_name
                         + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
 
+                if (checkIMP(mContext, SETIMP)) {
+                    setDataServer();
+                }
+
                 Random rand = new Random();
                 setTitle(adsList.get(rand.nextInt(adsList.size())));
             }
         }
+    }
+
+    private void setDataServer() {
+        cmpViewModel.setDataServer();
     }
 
     public NativeAd nextNativeAd() {

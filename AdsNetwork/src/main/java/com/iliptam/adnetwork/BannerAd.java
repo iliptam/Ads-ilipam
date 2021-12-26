@@ -2,7 +2,9 @@ package com.iliptam.adnetwork;
 
 import static com.iliptam.adnetwork.Adsiliptam.LS;
 import static com.iliptam.adnetwork.utils.Global.IMAGE_URL;
+import static com.iliptam.adnetwork.utils.Global.SETIMP;
 import static com.iliptam.adnetwork.utils.Global.check;
+import static com.iliptam.adnetwork.utils.Global.checkIMP;
 
 import android.content.Context;
 import android.content.Intent;
@@ -84,37 +86,38 @@ public class BannerAd extends RelativeLayout {
                     Random rand = new Random();
                     adCampaign = adsList.get(rand.nextInt(adsList.size()));
                     setTitle(adCampaign);
-                    setValues(adCampaign, camBody, camTitle);
+//                    setValues(adCampaign, camBody, camTitle);
                 }
             }
         });
     }
 
-    private void setTitle(Campaign adCampaign) {
-        adsViewModel.getAdTitle(adCampaign.campaignId).observe((LifecycleOwner) context, new Observer<List<CamTitle>>() {
+    private void setTitle(Campaign madCampaign) {
+        adsViewModel.getAdTitle(madCampaign.campaignId).observe((LifecycleOwner) context, new Observer<List<CamTitle>>() {
             @Override
             public void onChanged(List<CamTitle> adTitleList) {
                 if (adTitleList != null && adTitleList.size() > 0) {
 
                     Random rand = new Random();
                     camTitle = adTitleList.get(rand.nextInt(adTitleList.size()));
-                    setValues(adCampaign, camBody, camTitle);
+                    setBody(madCampaign);
+//                    setValues(adCampaign, camBody, camTitle);
                 }
             }
         });
+    }
 
-        adsViewModel.getAdBody(adCampaign.campaignId).observe((LifecycleOwner) context, new Observer<List<CamBody>>() {
+    private void setBody(Campaign madCampaign) {
+        adsViewModel.getAdBody(madCampaign.campaignId).observe((LifecycleOwner) context, new Observer<List<CamBody>>() {
             @Override
             public void onChanged(List<CamBody> adBodyList) {
                 if (adBodyList != null && adBodyList.size() > 0) {
                     Random rand = new Random();
                     camBody = adBodyList.get(rand.nextInt(adBodyList.size()));
-                    setValues(adCampaign, camBody, camTitle);
+                    setValues(madCampaign, camBody, camTitle);
                 }
             }
         });
-
-
     }
 
     public void setAdListener(AdListener adListener) {
@@ -173,40 +176,41 @@ public class BannerAd extends RelativeLayout {
                 ratingBar.setVisibility(VISIBLE);
             }
             adListener.onAdLoaded();
+
+
             prefManager.setImpration("imp" + adCampaign.cam_name,
                     prefManager.getImpration("imp" + adCampaign.cam_name) + 1);
 
             Log.i("Adsiliptam", "imp " + adCampaign.cam_name
                     + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
+
+            if (checkIMP(context, SETIMP)) {
+                setDataServer(adCampaign);
+            }
         } else {
             adListener.onAdLoadFailed("Not Load");
         }
     }
 
+    private void setDataServer(Campaign adCampaign) {
+        cmpViewModel.setDataServer();
+    }
+
     public void refreshAds(final int intervalSeconds, int count) {
-            if (count < 5) {
-                final Handler handler = new Handler(Looper.getMainLooper());
-                int finalCount = count + 1;
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        resetAd();
-                        refreshAds(intervalSeconds, finalCount);
-                    }
-                }, intervalSeconds * 1000);
-            }
+        if (count < 5) {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            int finalCount = count + 1;
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    resetAd();
+                    refreshAds(intervalSeconds, finalCount);
+                }
+            }, intervalSeconds * 1000);
+        }
     }
 
     private void resetAd() {
-        if (Global.isConnectedToInternet(context)) {
-            if (check(context, LS)) {
-                DataFromServer();
-            } else {
-                if (!prefManager.getBoolean("INIT")) {
-                    DataFromServer();
-                }
-            }
-        }
         if (adsList != null && adsList.size() > 0) {
             CamTitle camTitle = getAdTitle(adsList.get(bannerCount));
             CamBody camBody = getAdBody(adsList.get(bannerCount));

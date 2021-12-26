@@ -63,15 +63,12 @@ public class CmpRepository {
                 if (response != null && response.body() != null && response.body().size() > 0) {
                     SetData setData = new SetData(cmpDatabase, response.body(), prefManager);
                     setData.execute();
-
-                    UpdateData updateData = new UpdateData(response.body(), prefManager, application);
-                    updateData.execute();
-                    if (completeListener!=null) {
+                    if (completeListener != null) {
                         completeListener.onInitializationComplete(true);
                     }
                     prefManager.setBoolean("INIT", true);
                 } else {
-                    if (completeListener!=null) {
+                    if (completeListener != null) {
                         completeListener.onInitializationComplete(false);
                     }
                     prefManager.setBoolean("INIT", false);
@@ -80,10 +77,33 @@ public class CmpRepository {
 
             @Override
             public void onFailure(Call<List<AdCampaign>> call, Throwable t) {
-                if (completeListener!=null) {
+                if (completeListener != null) {
                     completeListener.onInitializationComplete(false);
                 }
                 prefManager.setBoolean("INIT", false);
+            }
+        });
+    }
+
+    public void setDataServer() {
+        Retrofit retrofit = apiClient.getClient();
+        apiRest service = retrofit.create(apiRest.class);
+        Call<List<AdCampaign>> call = service.getCampaignsById(CAT_ID);
+        call.enqueue(new Callback<List<AdCampaign>>() {
+            @Override
+            public void onResponse(Call<List<AdCampaign>> call, Response<List<AdCampaign>> response) {
+                if (response != null && response.body() != null && response.body().size() > 0) {
+
+                    for (int i = 0; i < response.body().size(); i++) {
+                        UpdateData uploadData = new UpdateData(response.body().get(i),
+                                prefManager, application);
+                        uploadData.execute();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<AdCampaign>> call, Throwable t) {
             }
         });
     }
@@ -168,11 +188,11 @@ public class CmpRepository {
 
     public static class UpdateData extends AsyncTask<String, String, String> {
 
-        public List<AdCampaign> campaignList;
+        public AdCampaign campaignList;
         PrefManager mprefManager;
         Application mapplication;
 
-        public UpdateData(List<AdCampaign> campaignList, PrefManager mprefManager, Application application) {
+        public UpdateData(AdCampaign campaignList, PrefManager mprefManager, Application application) {
             this.campaignList = campaignList;
             this.mprefManager = mprefManager;
             this.mapplication = application;
@@ -180,10 +200,7 @@ public class CmpRepository {
 
         @Override
         protected String doInBackground(String... strings) {
-
-            for (int i = 0; i < campaignList.size(); i++) {
-                uploadData(campaignList.get(i), mprefManager);
-            }
+                uploadData(campaignList, mprefManager);
             return "1";
         }
 
@@ -194,10 +211,8 @@ public class CmpRepository {
 
             String locale = mapplication.getResources().getConfiguration().locale.toString();
             String deviceName = getDeviceName();
-
 //            Log.i("Adsiliptam", "Local: " + getUserCountry(mapplication) + " " + locale + " " +
 //                    deviceName);
-
             if (adImp != 0) {
                 Retrofit retrofit = apiClient.getClient();
                 apiRest service = retrofit.create(apiRest.class);

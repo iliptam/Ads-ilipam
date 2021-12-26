@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.iliptam.adnetwork.interfaces.OnInitializationCompleteListener;
+import com.iliptam.adnetwork.models.Campaign;
 import com.iliptam.adnetwork.repository.CmpRepository;
 
 public class CmpViewModel extends AndroidViewModel {
@@ -20,5 +21,9 @@ public class CmpViewModel extends AndroidViewModel {
     }
     public void LoadFromServer(String key, OnInitializationCompleteListener completeListener){
         cmpRepository.loadFromServer(key, completeListener);
+    }
+
+    public void setDataServer() {
+        cmpRepository.setDataServer();
     }
 }
