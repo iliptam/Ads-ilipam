@@ -3,7 +3,11 @@ package com.iliptam.adnetwork.repository;
 import static com.iliptam.adnetwork.utils.Global.CAT_ID;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.iliptam.adnetwork.api.AdCampaign;
@@ -24,6 +28,7 @@ import com.iliptam.adnetwork.utils.PrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,11 +64,11 @@ public class CmpRepository {
                     SetData setData = new SetData(cmpDatabase, response.body(), prefManager);
                     setData.execute();
 
-                    UpdateData updateData = new UpdateData(response.body(), prefManager);
+                    UpdateData updateData = new UpdateData(response.body(), prefManager, application);
                     updateData.execute();
                     completeListener.onInitializationComplete(true);
                     prefManager.setBoolean("INIT", true);
-                }else {
+                } else {
                     completeListener.onInitializationComplete(false);
                     prefManager.setBoolean("INIT", false);
                 }
@@ -86,6 +91,7 @@ public class CmpRepository {
         public CampaignDao newCampaignDao;
         PrefManager mprefManager;
 
+
         public SetData(CmpDatabase db, List<AdCampaign> campaignList, PrefManager prefManager) {
             this.db = db;
             this.campaignList = campaignList;
@@ -101,8 +107,6 @@ public class CmpRepository {
 
             try {
                 List<Campaign> clist = new ArrayList<>();
-
-                Log.i("Adsiliptam", " " + campaignList.size());
 
                 for (int i = 0; i < campaignList.size(); i++) {
 
@@ -136,8 +140,10 @@ public class CmpRepository {
                             adCampaign.adIcon, adCampaign.adHeaderImage, adCampaign.adUrl, Float.parseFloat(adCampaign.adRating),
                             adCampaign.adCtaTxt, adCampaign.adBgColor, adCampaign.adTxtColor, adCampaign.adPrice,
                             adCampaign.adType));
-                    mprefManager.setImpration("imp" + adCampaign.camName, mprefManager.getImpration("imp" + adCampaign.camName));
-                    mprefManager.setClick("clc" + adCampaign.camName, mprefManager.getClick("clc" + adCampaign.camName));
+                    mprefManager.setImpration("imp" + adCampaign.camName,
+                            mprefManager.getImpration("imp" + adCampaign.camName));
+                    mprefManager.setClick("clc" + adCampaign.camName,
+                            mprefManager.getClick("clc" + adCampaign.camName));
                 }
 
                 db.runInTransaction(() -> {
@@ -158,10 +164,12 @@ public class CmpRepository {
 
         public List<AdCampaign> campaignList;
         PrefManager mprefManager;
+        Application mapplication;
 
-        public UpdateData(List<AdCampaign> campaignList, PrefManager mprefManager) {
+        public UpdateData(List<AdCampaign> campaignList, PrefManager mprefManager, Application application) {
             this.campaignList = campaignList;
             this.mprefManager = mprefManager;
+            this.mapplication = application;
         }
 
         @Override
@@ -178,10 +186,17 @@ public class CmpRepository {
             int adImp = prefManager.getImpration("imp" + adCampaign.camName);
             int adClick = prefManager.getClick("clc" + adCampaign.camName);
 
+            String locale = mapplication.getResources().getConfiguration().locale.toString();
+            String deviceName = getDeviceName();
+
+            Log.i("Adsiliptam", "Local: " + getUserCountry(mapplication) + " " + locale + " " +
+                    deviceName);
+
             if (adImp != 0) {
                 Retrofit retrofit = apiClient.getClient();
                 apiRest service = retrofit.create(apiRest.class);
-                Call<ApiResponse> call = service.updateCampaign(id, adImp, adClick);
+                Call<ApiResponse> call = service.updateCampaign(id, adImp, adClick, getDeviceName(),
+                        getUserCountry(mapplication), locale);
                 call.enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
@@ -202,5 +217,50 @@ public class CmpRepository {
         }
     }
 
+    public static String getUserCountry(Context context) {
+        try {
+            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            final String simCountry = tm.getSimCountryIso();
+            /*if (simCountry != null && simCountry.length() == 2) { // SIM country code is available
+                return simCountry.toLowerCase(Locale.US);
+            }
+            else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA) { */// device is not 3G (would be unreliable)
+            String networkCountry = tm.getNetworkCountryIso();
+            if (networkCountry != null && networkCountry.length() == 2) { // network country code is available
+                return networkCountry.toLowerCase(Locale.US);
+            }
 
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public static String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return capitalize(model);
+        }
+        return capitalize(manufacturer) + " " + model;
+    }
+
+    private static String capitalize(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return str;
+        }
+        char[] arr = str.toCharArray();
+        boolean capitalizeNext = true;
+        String phrase = "";
+        for (char c : arr) {
+            if (capitalizeNext && Character.isLetter(c)) {
+                phrase += Character.toUpperCase(c);
+                capitalizeNext = false;
+                continue;
+            } else if (Character.isWhitespace(c)) {
+                capitalizeNext = true;
+            }
+            phrase += c;
+        }
+        return phrase;
+    }
 }
