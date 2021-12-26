@@ -66,17 +66,23 @@ public class CmpRepository {
 
                     UpdateData updateData = new UpdateData(response.body(), prefManager, application);
                     updateData.execute();
-                    completeListener.onInitializationComplete(true);
+                    if (completeListener!=null) {
+                        completeListener.onInitializationComplete(true);
+                    }
                     prefManager.setBoolean("INIT", true);
                 } else {
-                    completeListener.onInitializationComplete(false);
+                    if (completeListener!=null) {
+                        completeListener.onInitializationComplete(false);
+                    }
                     prefManager.setBoolean("INIT", false);
                 }
             }
 
             @Override
             public void onFailure(Call<List<AdCampaign>> call, Throwable t) {
-                completeListener.onInitializationComplete(false);
+                if (completeListener!=null) {
+                    completeListener.onInitializationComplete(false);
+                }
                 prefManager.setBoolean("INIT", false);
             }
         });
@@ -189,8 +195,8 @@ public class CmpRepository {
             String locale = mapplication.getResources().getConfiguration().locale.toString();
             String deviceName = getDeviceName();
 
-            Log.i("Adsiliptam", "Local: " + getUserCountry(mapplication) + " " + locale + " " +
-                    deviceName);
+//            Log.i("Adsiliptam", "Local: " + getUserCountry(mapplication) + " " + locale + " " +
+//                    deviceName);
 
             if (adImp != 0) {
                 Retrofit retrofit = apiClient.getClient();

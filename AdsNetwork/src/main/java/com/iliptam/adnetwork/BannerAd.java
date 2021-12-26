@@ -1,6 +1,8 @@
 package com.iliptam.adnetwork;
 
+import static com.iliptam.adnetwork.Adsiliptam.LS;
 import static com.iliptam.adnetwork.utils.Global.IMAGE_URL;
+import static com.iliptam.adnetwork.utils.Global.check;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,12 +26,14 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.bumptech.glide.Glide;
 import com.iliptam.adnetwork.interfaces.AdListener;
+import com.iliptam.adnetwork.interfaces.OnInitializationCompleteListener;
 import com.iliptam.adnetwork.models.CamBody;
 import com.iliptam.adnetwork.models.CamTitle;
 import com.iliptam.adnetwork.models.Campaign;
 import com.iliptam.adnetwork.utils.Global;
 import com.iliptam.adnetwork.utils.PrefManager;
 import com.iliptam.adnetwork.viewmodels.AdsViewModel;
+import com.iliptam.adnetwork.viewmodels.CmpViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +56,8 @@ public class BannerAd extends RelativeLayout {
     String type;
     int bannerCount = 0;
     PrefManager prefManager;
+    public static OnInitializationCompleteListener completeListener;
+    public static CmpViewModel cmpViewModel;
 
     public BannerAd(Context context, String type) {
         super(context);
@@ -60,7 +66,11 @@ public class BannerAd extends RelativeLayout {
         prefManager = new PrefManager(context.getApplicationContext());
         adsList = new ArrayList<>();
         adsViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(AdsViewModel.class);
+        cmpViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CmpViewModel.class);
+    }
 
+    private static void DataFromServer() {
+        cmpViewModel.LoadFromServer("", null);
     }
 
     private void setData(String type) {
@@ -188,6 +198,15 @@ public class BannerAd extends RelativeLayout {
     }
 
     private void resetAd() {
+        if (Global.isConnectedToInternet(context)) {
+            if (check(context, LS)) {
+                DataFromServer();
+            } else {
+                if (!prefManager.getBoolean("INIT")) {
+                    DataFromServer();
+                }
+            }
+        }
         if (adsList != null && adsList.size() > 0) {
             CamTitle camTitle = getAdTitle(adsList.get(bannerCount));
             CamBody camBody = getAdBody(adsList.get(bannerCount));

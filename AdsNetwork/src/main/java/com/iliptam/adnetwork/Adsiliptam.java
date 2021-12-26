@@ -19,10 +19,13 @@ public class Adsiliptam {
     public static Context mcontext;
     public static CmpViewModel cmpViewModel;
     public static PrefManager prefManager;
+    public static int LS;
 
-    public static void initialize(Context context, int key, String url, int loadSeconds, OnInitializationCompleteListener listener) {
+    public static void initialize(Context context, int key, String url,
+                                  int loadSeconds, OnInitializationCompleteListener listener) {
         completeListener = listener;
         mcontext = context;
+        LS = loadSeconds;
         Global.CAT_ID = key;
         Global.API_URL = url;
         Global.IMAGE_URL = url + "uploads/";

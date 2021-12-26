@@ -1,6 +1,9 @@
 package com.iliptam.adnetwork;
 
+import static com.iliptam.adnetwork.Adsiliptam.LS;
+import static com.iliptam.adnetwork.Adsiliptam.prefManager;
 import static com.iliptam.adnetwork.utils.Global.IMAGE_URL;
+import static com.iliptam.adnetwork.utils.Global.check;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +11,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +37,7 @@ import com.iliptam.adnetwork.models.Campaign;
 import com.iliptam.adnetwork.utils.Global;
 import com.iliptam.adnetwork.utils.PrefManager;
 import com.iliptam.adnetwork.viewmodels.AdsViewModel;
+import com.iliptam.adnetwork.viewmodels.CmpViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,15 +58,32 @@ public class InterstitialAd {
     private static CamBody camBody;
 
     public static boolean isLoaded = false;
+    public static CmpViewModel cmpViewModel;
 
     public InterstitialAd(Context context, String type) {
         this.context = context;
         this.type = type;
         adsList = new ArrayList<>();
         adsViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(AdsViewModel.class);
+        cmpViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CmpViewModel.class);
+    }
+
+    private static void DataFromServer() {
+        cmpViewModel.LoadFromServer("", null);
     }
 
     public void loadAds() {
+
+        if (Global.isConnectedToInternet(context)) {
+            if (check(context, LS)) {
+                DataFromServer();
+            } else {
+                if (!prefManager.getBoolean("INIT")) {
+                    DataFromServer();
+                }
+            }
+        }
+
         if (Global.isConnectedToInternet(context)) {
             adsViewModel.getCampaign(type).observe((LifecycleOwner) context, new Observer<List<Campaign>>() {
                 @Override
@@ -168,7 +190,9 @@ public class InterstitialAd {
             tv_ads_title2.setText(camTitle.title);
             tv_ads_desc.setText(camBody.body);
             tv_price.setText(adCampaign.adPrice);
-            btn_install.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(adCampaign.adBgColor)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                btn_install.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(adCampaign.adBgColor)));
+            }
             btn_install.setTextColor(Color.parseColor(adCampaign.adTextColor));
 
 //            interstitial_parent.setBackgroundColor(Color.parseColor(adCampaign.adTextColor));
