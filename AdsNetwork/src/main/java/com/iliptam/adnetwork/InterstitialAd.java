@@ -70,11 +70,15 @@ public class InterstitialAd {
         cmpViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CmpViewModel.class);
     }
 
-    private static void DataFromServer() {
-        cmpViewModel.LoadFromServer("", null);
+    private static void setDataServer() {
+        cmpViewModel.setDataServer();
     }
 
     public void loadAds() {
+        if (checkIMP(context, SETIMP)) {
+            setDataServer();
+        }
+
         if (Global.isConnectedToInternet(context)) {
             adsViewModel.getCampaign(type).observe((LifecycleOwner) context, new Observer<List<Campaign>>() {
                 @Override
@@ -148,7 +152,6 @@ public class InterstitialAd {
         RelativeLayout interstitial_parent;
         PrefManager prefManager;
         List<Integer> layoutlist;
-        CmpViewModel cmpViewModel;
 
         protected void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -159,7 +162,6 @@ public class InterstitialAd {
             int layout = layoutlist.get(random.nextInt(layoutlist.size()));
             this.setContentView(layout);
 
-            cmpViewModel = new ViewModelProvider((ViewModelStoreOwner) this).get(CmpViewModel.class);
 
             prefManager = new PrefManager(InterstitialActivity.this);
             iv_ads_cancel = (ImageView) this.findViewById(R.id.iv_ads_cancel);
@@ -247,16 +249,8 @@ public class InterstitialAd {
             Log.i("Adsiliptam", "imp " + adCampaign.cam_name
                     + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
 
-            if (checkIMP(InterstitialActivity.this, SETIMP)) {
-                setDataServer(adCampaign);
-            }
-
             mAdListener.onAdLoaded();
 
-        }
-
-        private void setDataServer(Campaign adCampaign) {
-            cmpViewModel.setDataServer();
         }
 
         public void onBackPressed() {

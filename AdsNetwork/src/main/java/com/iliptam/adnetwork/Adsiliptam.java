@@ -38,6 +38,8 @@ public class Adsiliptam {
             if (check(mcontext, loadSeconds)) {
                 DataFromServer();
             } else {
+                prefManager.setBoolean("ISL_N", true);
+                prefManager.setBoolean("ISL", true);
                 if (!prefManager.getBoolean("INIT")) {
                     DataFromServer();
                 }

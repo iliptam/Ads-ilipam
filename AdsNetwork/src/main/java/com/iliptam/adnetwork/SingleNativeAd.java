@@ -26,15 +26,11 @@ import com.iliptam.adnetwork.utils.PrefManager;
 import com.iliptam.adnetwork.viewmodels.AdsViewModel;
 import com.iliptam.adnetwork.viewmodels.CmpViewModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-public class NativeAdsManager {
+public class SingleNativeAd {
 
     Context mContext;
     int numAdsRequested;
@@ -48,23 +44,19 @@ public class NativeAdsManager {
 
     public static boolean isLoaded = false;
 
-    int count = 0;
-    int loadCount = 0;
-    List<NativeAd> nativeAdList;
+    NativeAd nativeAd;
     Listener mListener;
     PrefManager prefManager;
     public static CmpViewModel cmpViewModel;
 
-    public NativeAdsManager(Context context, String type, int numAdsRequested) {
+    public SingleNativeAd(Context context, String type) {
         this.mContext = context;
         this.numAdsRequested = numAdsRequested;
         this.type = type;
         prefManager = new PrefManager(mContext);
         adsList = new ArrayList<>();
-        nativeAdList = new ArrayList<>();
         adsViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(AdsViewModel.class);
         cmpViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(CmpViewModel.class);
-
     }
 
     public void setListener(Listener listener) {
@@ -80,9 +72,6 @@ public class NativeAdsManager {
                     if (campaignList != null && campaignList.size() > 0) {
                         adsList.clear();
                         adsList.addAll(campaignList);
-                        loadCount = 0;
-                        nativeAdList.clear();
-                        count = 0;
                         Random rand = new Random();
                         adCampaign = adsList.get(rand.nextInt(adsList.size()));
                         setTitle(adCampaign);
@@ -124,30 +113,22 @@ public class NativeAdsManager {
     private void setValues(Campaign adCampaign, CamBody camBody, CamTitle camTitle) {
         if (adCampaign != null && camBody != null && camTitle != null) {
             if (prefManager.getBoolean("ISL_N")) {
-                count++;
-                if (count > numAdsRequested) {
-                    isLoaded = true;
-                    mListener.onAdsLoaded();
-                    prefManager.setBoolean("ISL_N", false);
-                } else {
-                    nativeAdList.add(new NativeAd(adCampaign.cam_name, camTitle.title, camBody.body,
-                            adCampaign.adIcon, adCampaign.adHeaderImage,
-                            adCampaign.adUrl, adCampaign.adRating, adCampaign.adCtaText, adCampaign.adBgColor,
-                            adCampaign.adTextColor, adCampaign.adPrice, false));
+                prefManager.setBoolean("ISL_N", false);
+                nativeAd = new NativeAd(adCampaign.cam_name, camTitle.title, camBody.body,
+                        adCampaign.adIcon, adCampaign.adHeaderImage,
+                        adCampaign.adUrl, adCampaign.adRating, adCampaign.adCtaText, adCampaign.adBgColor,
+                        adCampaign.adTextColor, adCampaign.adPrice, false);
 
-                    prefManager.setImpration("imp" + adCampaign.cam_name,
-                            prefManager.getImpration("imp" + adCampaign.cam_name) + 1);
+                prefManager.setImpration("imp" + adCampaign.cam_name,
+                        prefManager.getImpration("imp" + adCampaign.cam_name) + 1);
 
-                    Log.i("Adsiliptam", "imp " + adCampaign.cam_name
-                            + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
+                Log.i("Adsiliptam", "imp " + adCampaign.cam_name
+                        + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
 
-                    if (checkIMP(mContext, SETIMP)) {
-                        setDataServer();
-                    }
-
-                    Random rand = new Random();
-                    setTitle(adsList.get(rand.nextInt(adsList.size())));
+                if (checkIMP(mContext, SETIMP)) {
+                    setDataServer();
                 }
+                mListener.onAdsLoaded();
             }
         }
     }
@@ -156,15 +137,6 @@ public class NativeAdsManager {
         cmpViewModel.setDataServer();
     }
 
-    public NativeAd nextNativeAd() {
-        if (nativeAdList.size() > 0) {
-            NativeAd mNative = nativeAdList.get(loadCount);
-            loadCount++;
-            return mNative;
-        } else {
-            return null;
-        }
-    }
     public interface Listener {
         void onAdsLoaded();
 
@@ -173,9 +145,6 @@ public class NativeAdsManager {
 
     public void registerViewForInteraction(Context context, NativeAd nativeAd,
                                            ImageView icon, ImageView header, Button button) {
-
-//        Picasso.get().load(IMAGE_URL + nativeAd.adIcon).into(icon);
-//        Picasso.get().load(IMAGE_URL + nativeAd.adHeaderImage).into(header);
 
         nativeAd.setLoad(true);
         Glide.with(mContext).load(IMAGE_URL + nativeAd.adIcon).into(icon);
@@ -211,37 +180,14 @@ public class NativeAdsManager {
 
     }
 
-    public boolean checkImp(Context context, String cam_name) {
-        final PrefManager prf = new PrefManager(context.getApplicationContext());
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String strDate = sdf.format(c.getTime());
-
-        if (prf.getString(cam_name).equals("")) {
-            prf.setString(cam_name, strDate);
-            return true;
+    public NativeAd getnativeAd() {
+        if (nativeAd != null) {
+            return nativeAd;
         } else {
-            String toyBornTime = prf.getString(cam_name);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-            try {
-                Date oldDate = dateFormat.parse(toyBornTime);
-                System.out.println(oldDate);
-
-                Date currentDate = new Date();
-
-                long diff = currentDate.getTime() - oldDate.getTime();
-                long seconds = diff / 1000;
-                if (seconds > 3) {
-                    prf.setString(cam_name, strDate);
-                    return true;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            return null;
         }
-        return false;
     }
+
 
 
 }

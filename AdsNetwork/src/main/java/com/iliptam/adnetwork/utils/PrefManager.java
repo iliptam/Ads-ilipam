@@ -51,7 +51,7 @@ public class PrefManager {
     }
 
     public boolean getBoolean(String PREF_NAME) {
-        return pref.getBoolean(PREF_NAME,true);
+        return pref.getBoolean(PREF_NAME,false);
     }
     public void remove(String PREF_NAME){
         if(pref.contains(PREF_NAME)){

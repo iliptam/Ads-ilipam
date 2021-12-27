@@ -16,7 +16,7 @@ public class Global {
     public static String IMAGE_URL = "";
 
     public static int CAT_ID;
-    public static int SETIMP = 100;
+    public static int SETIMP = 60;
 
     public static boolean check(Context context, long snd) {
         final PrefManager prf = new PrefManager(context.getApplicationContext());

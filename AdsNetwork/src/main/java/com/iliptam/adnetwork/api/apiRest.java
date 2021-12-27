@@ -17,8 +17,8 @@ public interface apiRest {
     @FormUrlEncoded
     @POST("api/update-campaign?")
     Call<ApiResponse> updateCampaign(@Field("id") int id,
-                                     @Field("ad_impression") int ad_impression,
-                                     @Field("ad_click") int ad_click,
+                                     @Field("impression") int ad_impression,
+                                     @Field("click") int ad_click,
                                      @Field("device_info") String device_info,
                                      @Field("country") String country,
                                      @Field("language") String language);

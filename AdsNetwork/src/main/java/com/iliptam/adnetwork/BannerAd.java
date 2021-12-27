@@ -100,14 +100,11 @@ public class BannerAd extends RelativeLayout {
 
                     Random rand = new Random();
                     camTitle = adTitleList.get(rand.nextInt(adTitleList.size()));
-                    setBody(madCampaign);
-//                    setValues(adCampaign, camBody, camTitle);
+                    setValues(adCampaign, camBody, camTitle);
                 }
             }
         });
-    }
 
-    private void setBody(Campaign madCampaign) {
         adsViewModel.getAdBody(madCampaign.campaignId).observe((LifecycleOwner) context, new Observer<List<CamBody>>() {
             @Override
             public void onChanged(List<CamBody> adBodyList) {
@@ -143,49 +140,54 @@ public class BannerAd extends RelativeLayout {
         this.setBackgroundColor(Color.parseColor("#F5F5F5"));
 
         if (adCampaign != null && camBody != null && camTitle != null) {
-            this.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(adCampaign.adUrl));
-                    context.startActivity(browse);
-                    prefManager.setClick("clc" + adCampaign.cam_name,
-                            prefManager.getClick("clc" + adCampaign.cam_name) + 1);
+
+            if (prefManager.getBoolean("ISL")) {
+
+                prefManager.setBoolean("ISL", false);
+                this.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(adCampaign.adUrl));
+                        context.startActivity(browse);
+                        prefManager.setClick("clc" + adCampaign.cam_name,
+                                prefManager.getClick("clc" + adCampaign.cam_name) + 1);
+                    }
+                });
+
+                button.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(adCampaign.adUrl));
+                        context.startActivity(browse);
+                        prefManager.setClick("clc" + adCampaign.cam_name,
+                                prefManager.getClick("clc" + adCampaign.cam_name) + 1);
+                    }
+                });
+
+                Glide.with(context).load(IMAGE_URL + adCampaign.adIcon).into(imageView);
+                textViewName.setText("" + camTitle.title);
+                textViewDescription.setText("" + camBody.body);
+                ratingBar.setRating(adCampaign.adRating);
+                button.setText("" + adCampaign.adCtaText);
+                button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(adCampaign.adBgColor)));
+                button.setTextColor(Color.parseColor(adCampaign.adTextColor));
+                if (adCampaign.adRating == 0) {
+                    ratingBar.setVisibility(GONE);
+                } else {
+                    ratingBar.setVisibility(VISIBLE);
                 }
-            });
+                adListener.onAdLoaded();
 
-            button.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(adCampaign.adUrl));
-                    context.startActivity(browse);
-                    prefManager.setClick("clc" + adCampaign.cam_name,
-                            prefManager.getClick("clc" + adCampaign.cam_name) + 1);
+
+                prefManager.setImpration("imp" + adCampaign.cam_name,
+                        prefManager.getImpration("imp" + adCampaign.cam_name) + 1);
+
+                Log.i("Adsiliptam", "imp " + adCampaign.cam_name
+                        + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
+
+                if (checkIMP(context, SETIMP)) {
+                    setDataServer(adCampaign);
                 }
-            });
-
-            Glide.with(context).load(IMAGE_URL + adCampaign.adIcon).into(imageView);
-            textViewName.setText("" + camTitle.title);
-            textViewDescription.setText("" + camBody.body);
-            ratingBar.setRating(adCampaign.adRating);
-            button.setText("" + adCampaign.adCtaText);
-            button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(adCampaign.adBgColor)));
-            button.setTextColor(Color.parseColor(adCampaign.adTextColor));
-            if (adCampaign.adRating == 0) {
-                ratingBar.setVisibility(GONE);
-            } else {
-                ratingBar.setVisibility(VISIBLE);
-            }
-            adListener.onAdLoaded();
-
-
-            prefManager.setImpration("imp" + adCampaign.cam_name,
-                    prefManager.getImpration("imp" + adCampaign.cam_name) + 1);
-
-            Log.i("Adsiliptam", "imp " + adCampaign.cam_name
-                    + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
-
-            if (checkIMP(context, SETIMP)) {
-                setDataServer(adCampaign);
             }
         } else {
             adListener.onAdLoadFailed("Not Load");
@@ -215,7 +217,7 @@ public class BannerAd extends RelativeLayout {
             CamTitle camTitle = getAdTitle(adsList.get(bannerCount));
             CamBody camBody = getAdBody(adsList.get(bannerCount));
 
-            setValues(adsList.get(bannerCount), camBody, camTitle);
+            setNewValues(adsList.get(bannerCount), camBody, camTitle);
 
             incrementAndSaveCounter();
         }
@@ -252,6 +254,60 @@ public class BannerAd extends RelativeLayout {
             }
         });
         return camTitle;
+    }
+
+    private void setNewValues(Campaign adCampaign, CamBody camBody, CamTitle camTitle) {
+//        Log.e("FF", "FFFF");
+        this.setBackgroundColor(Color.parseColor("#F5F5F5"));
+
+        if (adCampaign != null && camBody != null && camTitle != null) {
+                this.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(adCampaign.adUrl));
+                        context.startActivity(browse);
+                        prefManager.setClick("clc" + adCampaign.cam_name,
+                                prefManager.getClick("clc" + adCampaign.cam_name) + 1);
+                    }
+                });
+
+                button.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(adCampaign.adUrl));
+                        context.startActivity(browse);
+                        prefManager.setClick("clc" + adCampaign.cam_name,
+                                prefManager.getClick("clc" + adCampaign.cam_name) + 1);
+                    }
+                });
+
+                Glide.with(context).load(IMAGE_URL + adCampaign.adIcon).into(imageView);
+                textViewName.setText("" + camTitle.title);
+                textViewDescription.setText("" + camBody.body);
+                ratingBar.setRating(adCampaign.adRating);
+                button.setText("" + adCampaign.adCtaText);
+                button.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(adCampaign.adBgColor)));
+                button.setTextColor(Color.parseColor(adCampaign.adTextColor));
+                if (adCampaign.adRating == 0) {
+                    ratingBar.setVisibility(GONE);
+                } else {
+                    ratingBar.setVisibility(VISIBLE);
+                }
+                adListener.onAdLoaded();
+
+
+                prefManager.setImpration("imp" + adCampaign.cam_name,
+                        prefManager.getImpration("imp" + adCampaign.cam_name) + 1);
+
+                Log.i("Adsiliptam", "imp " + adCampaign.cam_name
+                        + " " + prefManager.getImpration("imp" + adCampaign.cam_name));
+
+                if (checkIMP(context, SETIMP)) {
+                    setDataServer(adCampaign);
+                }
+        } else {
+            adListener.onAdLoadFailed("Not Load");
+        }
     }
 
 }

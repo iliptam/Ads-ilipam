@@ -144,6 +144,8 @@ public class CmpRepository {
                             AdTitle stitle = adCampaign.adTitle.get(j);
                             camTitleList.add(new CamTitle(adCampaign.id, stitle.id, stitle.title));
                         }
+                        mprefManager.setBoolean("ISL_N", false);
+                        mprefManager.setBoolean("ISL", false);
                         db.runInTransaction(() -> {
                             titleDao.deleteById(adCampaign.id);
                             titleDao.insertAll(camTitleList);
@@ -156,6 +158,8 @@ public class CmpRepository {
                             AdDescription sbody = adCampaign.adDescription.get(j);
                             camBodyList.add(new CamBody(adCampaign.id, sbody.id, sbody.title));
                         }
+                        mprefManager.setBoolean("ISL_N", false);
+                        mprefManager.setBoolean("ISL", false);
                         db.runInTransaction(() -> {
                             bodyDao.deleteById(adCampaign.id);
                             bodyDao.insertAll(camBodyList);
@@ -172,6 +176,8 @@ public class CmpRepository {
                             mprefManager.getClick("clc" + adCampaign.camName));
                 }
 
+                mprefManager.setBoolean("ISL", true);
+                mprefManager.setBoolean("ISL_N", true);
                 db.runInTransaction(() -> {
                     newCampaignDao.deleteTable();
                     newCampaignDao.insertAll(clist);
