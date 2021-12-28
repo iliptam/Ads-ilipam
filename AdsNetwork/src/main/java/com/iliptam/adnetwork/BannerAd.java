@@ -214,26 +214,22 @@ public class BannerAd extends RelativeLayout {
 
     private void resetAd() {
         if (adsList != null && adsList.size() > 0) {
-            CamTitle camTitle = getAdTitle(adsList.get(bannerCount));
-            CamBody camBody = getAdBody(adsList.get(bannerCount));
-
-            setNewValues(adsList.get(bannerCount), camBody, camTitle);
-
+            getAdTitle(adsList.get(bannerCount));
             incrementAndSaveCounter();
         }
     }
 
-    private CamBody getAdBody(Campaign adCampaign) {
+    private void getAdBody(Campaign adCampaign, CamTitle camTitle) {
         adsViewModel.getAdBody(adCampaign.campaignId).observe((LifecycleOwner) context, new Observer<List<CamBody>>() {
             @Override
             public void onChanged(List<CamBody> adBodyList) {
                 if (adBodyList != null && adBodyList.size() > 0) {
                     Random rand = new Random();
-                    camBody = adBodyList.get(rand.nextInt(adBodyList.size()));
+                    CamBody camBody = adBodyList.get(rand.nextInt(adBodyList.size()));
+                    setNewValues(adCampaign, camBody, camTitle);
                 }
             }
         });
-        return camBody;
     }
 
     private void incrementAndSaveCounter() {
@@ -243,21 +239,20 @@ public class BannerAd extends RelativeLayout {
         }
     }
 
-    private CamTitle getAdTitle(Campaign adCampaign) {
+    private void getAdTitle(Campaign adCampaign) {
         adsViewModel.getAdTitle(adCampaign.campaignId).observe((LifecycleOwner) context, new Observer<List<CamTitle>>() {
             @Override
             public void onChanged(List<CamTitle> adTitleList) {
                 if (adTitleList != null && adTitleList.size() > 0) {
                     Random rand = new Random();
-                    camTitle = adTitleList.get(rand.nextInt(adTitleList.size()));
+                    CamTitle camTitle = adTitleList.get(rand.nextInt(adTitleList.size()));
+                    getAdBody(adCampaign, camTitle);
                 }
             }
         });
-        return camTitle;
     }
 
     private void setNewValues(Campaign adCampaign, CamBody camBody, CamTitle camTitle) {
-//        Log.e("FF", "FFFF");
         this.setBackgroundColor(Color.parseColor("#F5F5F5"));
 
         if (adCampaign != null && camBody != null && camTitle != null) {

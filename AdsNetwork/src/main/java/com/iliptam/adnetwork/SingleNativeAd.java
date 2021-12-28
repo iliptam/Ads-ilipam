@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.bumptech.glide.Glide;
+import com.iliptam.adnetwork.api.AdCampaign;
 import com.iliptam.adnetwork.models.CamBody;
 import com.iliptam.adnetwork.models.CamTitle;
 import com.iliptam.adnetwork.models.Campaign;
@@ -37,10 +38,6 @@ public class SingleNativeAd {
     AdsViewModel adsViewModel;
     List<Campaign> adsList;
     String type;
-
-    private static Campaign adCampaign;
-    private static CamTitle camTitle;
-    private static CamBody camBody;
 
     public static boolean isLoaded = false;
 
@@ -73,7 +70,7 @@ public class SingleNativeAd {
                         adsList.clear();
                         adsList.addAll(campaignList);
                         Random rand = new Random();
-                        adCampaign = adsList.get(rand.nextInt(adsList.size()));
+                        Campaign adCampaign = adsList.get(rand.nextInt(adsList.size()));
                         setTitle(adCampaign);
                     } else {
                         mListener.onAdError("Load Failed");
@@ -90,20 +87,20 @@ public class SingleNativeAd {
                 if (adTitleList != null && adTitleList.size() > 0) {
 
                     Random rand = new Random();
-                    camTitle = adTitleList.get(rand.nextInt(adTitleList.size()));
-                    setBody(adCampaign);
+                   CamTitle camTitle = adTitleList.get(rand.nextInt(adTitleList.size()));
+                    setBody(adCampaign, camTitle);
                 }
             }
         });
     }
 
-    private void setBody(Campaign adCampaign) {
+    private void setBody(Campaign adCampaign, CamTitle camTitle) {
         adsViewModel.getAdBody(adCampaign.campaignId).observe((LifecycleOwner) mContext, new Observer<List<CamBody>>() {
             @Override
             public void onChanged(List<CamBody> adBodyList) {
                 if (adBodyList != null && adBodyList.size() > 0) {
                     Random rand = new Random();
-                    camBody = adBodyList.get(rand.nextInt(adBodyList.size()));
+                   CamBody camBody = adBodyList.get(rand.nextInt(adBodyList.size()));
                     setValues(adCampaign, camBody, camTitle);
                 }
             }
